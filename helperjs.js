@@ -1,5 +1,7 @@
 /*
  * Arslan Şahin
+ * arsann@gmail.com
+ * helperjs.com
  * 28-06-2017
  */
 'use strict'
@@ -55,10 +57,94 @@ window.addEventListener("load",function(event) {
     }
 
   });
+
+  //file load
+  document.querySelectorAll('[load-file]').forEach(function(x){
+
+    var file = x.getAttribute('load-file');
+
+    if(file){
+
+      var info = (/[.]/.exec(file)) ? /[^.]+$/.exec(file) : undefined;
+
+      if(info[0].toLowerCase() == 'css'){
+        helperjs.loadcss([file]);
+      }
+
+      else if(info[0].toLowerCase() == 'js'){
+        helperjs.loadjs([file]);
+      }
+
+    }
+
+  });
+
+  //include file
+  document.querySelectorAll('[include]').forEach(function(x){
+    if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1 && x.getAttribute('include')){
+      var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", x.getAttribute('include'), false);
+        rawFile.onreadystatechange = function () {
+            if(rawFile.readyState === 4) {
+                if(rawFile.status === 200 || rawFile.status == 0) {
+                    x.innerHTML = rawFile.responseText;
+                }
+            }
+        }
+        rawFile.send(null);
+    }
+  });
+
   document.querySelector('html').style.display='block';
 },false);
 
 var helperjs = {
+
+  ajax : function(data){
+
+    try {
+
+      if(typeof data != 'object') throw new Error();
+
+      if(!Object.keys(data).indexOf('type') < 0 || !Object.keys(data).indexOf('url') < 0) throw new Error();
+      var http = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+      http.open(data.type, data.url, true);
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      http.onreadystatechange = function () {
+        if (http.readyState == 4) {
+          if (http.status == 200) {
+            data.success && data.success(JSON.parse(http.responseText));
+          } else {
+            data.error && data.error(http.status);
+          }
+        }
+      };
+
+      data.data ? http.send(data):http.send(null);
+
+    } catch (e) {
+      console.log(e);
+    }
+
+  },
+
+  post: function (url, data, successHandler, errorHandler) {
+    var http = new XMLHttpRequest();
+    http.open("POST", site.url+'/app/api/oyun.php?action='+url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    http.onreadystatechange = function () {
+      if (http.readyState == 4) {
+        if (http.status == 200) {
+          successHandler && successHandler(JSON.parse(http.responseText));
+        } else {
+          errorHandler && errorHandler(http.status);
+        }
+      }
+    };
+    http.send(data);
+  },
   //multiple js file load
   loadjs : function(js_path) {
     if(js_path.length > 0){
