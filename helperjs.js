@@ -95,6 +95,26 @@ window.addEventListener("load",function(event) {
     }
   });
 
+  //Convert first characters of text to uppercase
+  document.querySelectorAll('[uppercase*=true]').forEach(function(x){
+    var utf8Char1 = ['ş','i','ı','ö','ü','ğ','ç'];
+    var utf8Char2 = ['Ş','İ','I','Ö','Ü','Ğ','Ç'];
+    if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
+      x.innerHTML =  x.innerHTML.trim().split(' ').map(function(x){
+        var rep = utf8Char1.indexOf(x.charAt(0)) < 0 ? x.charAt(0).toUpperCase() : utf8Char2[utf8Char1.indexOf(x.charAt(0))];
+        return rep+x.slice(1);
+      }).join(' ');
+    }
+
+    else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
+      x.value =  x.value.trim().split(' ').map(function(x){
+        var rep = utf8Char1.indexOf(x.charAt(0)) < 0 ? x.charAt(0).toUpperCase() : utf8Char2[utf8Char1.indexOf(x.charAt(0))];
+        return rep+x.slice(1);
+      }).join(' ');
+    }
+
+  });
+
   document.querySelector('html').style.display='block';
 },false);
 
@@ -124,11 +144,27 @@ var helperjs = {
       data.data ? http.send(data):http.send(null);
 
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
 
   },
-  
+
+  post: function (url, data, successHandler, errorHandler) {
+    var http = new XMLHttpRequest();
+    http.open("POST", site.url+'/app/api/oyun.php?action='+url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    http.onreadystatechange = function () {
+      if (http.readyState == 4) {
+        if (http.status == 200) {
+          successHandler && successHandler(JSON.parse(http.responseText));
+        } else {
+          errorHandler && errorHandler(http.status);
+        }
+      }
+    };
+    http.send(data);
+  },
   //multiple js file load
   loadjs : function(js_path) {
     if(js_path.length > 0){
