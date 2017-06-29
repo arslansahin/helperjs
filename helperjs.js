@@ -148,23 +148,7 @@ var helperjs = {
     }
 
   },
-
-  post: function (url, data, successHandler, errorHandler) {
-    var http = new XMLHttpRequest();
-    http.open("POST", site.url+'/app/api/oyun.php?action='+url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-    http.onreadystatechange = function () {
-      if (http.readyState == 4) {
-        if (http.status == 200) {
-          successHandler && successHandler(JSON.parse(http.responseText));
-        } else {
-          errorHandler && errorHandler(http.status);
-        }
-      }
-    };
-    http.send(data);
-  },
+ 
   //multiple js file load
   loadjs : function(js_path) {
     if(js_path.length > 0){
