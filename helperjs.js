@@ -13,7 +13,10 @@ window.addEventListener("load",function(event) {
   document.querySelectorAll('[striptags*=true]').forEach((function(x){
 
     if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
-      x.innerHTML = x.innerHTML.replace(/(<([^>]+)>)/ig,"");
+      x.innerHTML = x.innerHTML.trim().replace(/(<([^>]+)>)/ig,"");
+    }
+    else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
+      x.value = x.value.trim().replace(/(<([^>]+)>)/ig,"");
     }
 
   }));
