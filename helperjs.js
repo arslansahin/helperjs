@@ -6,7 +6,7 @@
  */
 'use strict'
 document.querySelector('html').style.display='none';
-var elementArray = ['div','p','span','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr];
+var elementArray = ['div','p','span','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr'];
 window.addEventListener("load",function(event) {
 
   //striptags
