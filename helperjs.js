@@ -6,7 +6,7 @@
  */
 'use strict'
 document.querySelector('html').style.display='none';
-var elementArray = ['div','p','span','h1','h2','h3','h4','h5','table','tr','td','th'];
+var elementArray = ['div','p','span','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol'];
 window.addEventListener("load",function(event) {
 
   //striptags
@@ -31,7 +31,6 @@ window.addEventListener("load",function(event) {
       else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
         x.value = x.value.trim().substr(start,end);
       }
-
 
   }));
 
@@ -120,35 +119,47 @@ window.addEventListener("load",function(event) {
 
 var helperjs = {
 
-  ajax : function(data){
-
+  ajax : function(obj){
+    /*
+      State  Description
+      0      The request is not initialized
+      1      The request has been set up
+      2      The request has been sent
+      3      The request is in process
+      4      The request is complete
+    */
     try {
 
-      if(typeof data != 'object') throw new Error();
+      if(typeof obj != 'object') throw new Error();
 
-      if(!Object.keys(data).indexOf('type') < 0 || !Object.keys(data).indexOf('url') < 0) throw new Error();
+      if(!Object.keys(obj).indexOf('type') < 0 || !Object.keys(obj).indexOf('url') < 0) throw new Error();
       var http = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-      http.open(data.type, data.url, true);
+      http.open(obj.type, obj.url, true);
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
       http.onreadystatechange = function () {
+
+        if(http.readyState == 2 && http.status == 200){
+          obj.start && obj.start(http.status);
+        }
+
         if (http.readyState == 4) {
+
           if (http.status == 200) {
-            data.success && data.success(JSON.parse(http.responseText));
+            obj.success && obj.success(http.responseText);
           } else {
-            data.error && data.error(http.status);
+            obj.error && obj.error(http.status);
           }
         }
-      };
 
-      data.data ? http.send(data):http.send(null);
+      };
+      http.send(obj.data?obj.data:null);
 
     } catch (e) {
       //console.log(e);
     }
 
   },
- 
+
   //multiple js file load
   loadjs : function(js_path) {
     if(js_path.length > 0){
