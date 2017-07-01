@@ -226,7 +226,35 @@ window.addEventListener("load",function(event) {
     });
   });
   
+  //str-replace
+  //Replace the text in the typed element str-replace = "[{searched text1, searched text2}, {newtext1, newtext2}]"
+  document.querySelectorAll('[str-replace*="["]').forEach(function(x){
+    try {
+           
+      var data = x.getAttribute('str-replace').trim().replace('[{','').replace('}]','').split('},{');
+      
+      if(!data[0] && !data[1]) throw new Error('Missing parameter.');
+      
+      if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
+        if(x.innerHTML){
+          x.innerHTML = x.innerHTML.str_replace(data[0].split(','),data[1].split(','));
+        }
+      }
+
+      else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
+        if(x.value){
+          x.value = x.value.str_replace(data[0].split(','),data[1].split(','));
+        }
+      }
+
+    } catch (e) {
+      //console.log(e);
+    }
+
+  });
+  
   document.querySelector('html').style.display='block';
+  
 },false);
  
 var helperjs = {
@@ -312,4 +340,4 @@ String.prototype.str_replace = function(find, replace) {
 
 Array.prototype.array_end = function(){
   return this[this.length-1];
-}
+};
