@@ -148,26 +148,27 @@ window.addEventListener("load",function(event) {
         var height = height ? height.indexOf('%') > -1 ? height:height+'px':'auto';
  
         //youtube.com
-        if(src.indexOf('youtube.com') > -1){
+        if(src.indexOf('youtube.com/watch?v=') > -1){
           src = '//www.youtube.com/embed/'+src.split('watch?v=')[1].split('&')[0];
         }
         
         //dailymotion
-        else if(src.indexOf('dailymotion.com') > -1){
+        else if(src.indexOf('dailymotion.com/video') > -1){
           var vid = src.str_replace(
             ['https://','http://','www.','dailymotion.com/video/'],
             ['','','','']
           ).split('_');
-          src = '//www.dailymotion.com/embed/video/'+vid[0];
+          src = vid[0] ? '//www.dailymotion.com/embed/video/'+vid[0]:src;
         }
+        
         //vimeo.com
         else if(src.indexOf('vimeo.com') > -1){  
           var vid = src.str_replace(['https://','http://','www.'],['','','']).split('/');
-          src = '//player.vimeo.com/video/'+vid[1]+'?title=0&byline=0&portrait=0&badge=0';
+          src = vid[1] ? '//player.vimeo.com/video/'+vid[1]+'?title=0&byline=0&portrait=0&badge=0':src;
         }
         
         //izlesene.com
-        else if(src.indexOf('izlesene.com') > -1){
+        else if(src.indexOf('izlesene.com/video') > -1){
           var vid = src.str_replace(
             ['https://','http://','www.','izlesene.com/video/'],
             ['','','','']
@@ -178,28 +179,25 @@ window.addEventListener("load",function(event) {
         //vidivodo.com
         else if(src.indexOf('vidivodo.com') > -1){
           var vid = src.str_replace(['https://','http://','www.'],['','','']).split('/');
-          src = '//www.vidivodo.com/embed/'+vid[1];
+          src = vid[1] ? '//www.vidivodo.com/embed/'+vid[1]:src;
         }
         
         //break.com
-        else if(src.indexOf('break.com') > -1){
+        else if(src.indexOf('break.com/video') > -1){
           var vid = src.str_replace(
             ['https://','http://','www.','break.com/video/'],
             ['','','','']
           ).split('-').array_end();
           src = '//www.break.com/embed/'+vid+'?embed=1';
         }
+        
         //alkislarlayasiyorum.com
-        else if(src.indexOf('alkislarlayasiyorum.com') > -1){
+        else if(src.indexOf('alkislarlayasiyorum.com/icerik') > -1){
           var vid = src.str_replace(
             ['https://','http://','www.','alkislarlayasiyorum.com/icerik/'],
             ['','','','']
           ).split('/');
           src = '//alkislarlayasiyorum.com/embedplayer/'+vid[0];
-        }
-        //other sources
-        else {
-          src = src;
         }
 
         var open = '<div id="helperjs_ov_'+id+'" style="position:fixed;z-index:1;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:#000;background-color:rgba(0,0,0,0.4)">';
@@ -209,6 +207,7 @@ window.addEventListener("load",function(event) {
         open +='</div>';
         open +='</div>';
         document.querySelector('body').insertAdjacentHTML('beforeend',open);
+        
         //delete
         document.getElementById('close_ov_'+id).addEventListener('click',function(){
           var element = document.getElementById("helperjs_ov_"+id+"");
@@ -216,12 +215,12 @@ window.addEventListener("load",function(event) {
             element.parentNode.removeChild(element);
           }
         });
+        
         //disable a element event
         x.nodeName.toLowerCase() == 'a'? event.preventDefault():'';
-          
-      
+
       } catch (e) {
-        console.log(e);
+       //console.log(e);
       }
 
     });
