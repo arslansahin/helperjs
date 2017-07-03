@@ -321,19 +321,46 @@ var helperjs = {
       //console.log(e);
     }
   },
-
+  createscript : function(source){
+    var create = document.createElement('script');
+    create.type = 'text/javascript';
+    //create.async = true;
+    create.src = source;
+    var tag = document.getElementsByTagName('script')[0];
+    tag.parentNode.insertBefore(create,tag);
+  },
   //multiple js file load
-  loadjs : function(js_path) {
-    if(js_path.length > 0){
-      for(var js in js_path){
-        var create = document.createElement('script');
-        create.type = 'text/javascript';
-        create.async = true;
-        create.src = js_path[js];
-        var tag = document.getElementsByTagName('script')[0];
-        tag.parentNode.insertBefore(create,tag);
+  loadjs : function(js_path,handler) {
+
+    if(typeof js_path == 'object'){
+
+      if(js_path.length > 0){
+        for(var js in js_path){
+          helperjs.createscript(js_path[js]);
+        }
       }
+
     }
+
+    else if(typeof js_path == 'string'){
+      var http = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+      http.open('GET', js_path, true);
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function () {
+        if (http.readyState == 4) {
+          if (http.status == 200) {
+            helperjs.createscript(js_path);
+            handler();
+          } else {
+            console.log('Not loaded file');
+          }
+        }
+      };
+      http.send(null);
+
+    }
+
+
   },
   //multiple css file load
   loadcss : function(css_path) {
