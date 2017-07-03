@@ -5,6 +5,8 @@
  * 28-06-2017
  */
 'use strict'
+NodeList.prototype.forEach = Array.prototype.forEach;
+HTMLCollection.prototype.forEach = Array.prototype.forEach;
 document.querySelector('html').style.display='none';
 var elementArray = ['div','a','p','span','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr'];
 window.addEventListener("load",function(event) {
@@ -15,9 +17,15 @@ window.addEventListener("load",function(event) {
     if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
       x.innerHTML = x.innerHTML.trim().replace(/(<([^>]+)>)/ig,"");
     }
-    else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
-      x.value = x.value.trim().replace(/(<([^>]+)>)/ig,"");
+
+    else if(x.nodeName.toLowerCase() == 'input' || x.type.toLowerCase() == 'text'){
+      x.getAttribute('value') ? x.setAttribute('value',x.getAttribute('value').trim().replace(/(<([^>]+)>)/ig,"")):'';
     }
+
+    else if(x.nodeName.toLowerCase() == 'textarea' ){
+      x.textContent ? x.textContent = x.textContent.trim().replace(/(<([^>]+)>)/ig,""):'';
+    }
+
 
   }));
 
@@ -31,9 +39,14 @@ window.addEventListener("load",function(event) {
         x.innerHTML = x.innerHTML.trim().substr(start,end);
       }
 
-      else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
-        x.value = x.value.trim().substr(start,end);
+      else if(x.nodeName.toLowerCase() == 'input' || x.type.toLowerCase() == 'text'){
+        x.getAttribute('value') ? x.setAttribute('value',x.getAttribute('value').trim().substr(start,end)):'';
       }
+
+      else if(x.nodeName.toLowerCase() == 'textarea' ){
+        x.textContent ? x.textContent = x.textContent.trim().substr(start,end):'';
+      }
+
 
   }));
 
@@ -51,11 +64,11 @@ window.addEventListener("load",function(event) {
         x.innerHTML = helperjs.MD5(x.innerHTML);
       }
     }
-
-    else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
-      if(x.value){
-        x.value = helperjs.MD5(x.value);
-      }
+    else if(x.nodeName.toLowerCase() == 'input' || x.type.toLowerCase() == 'text'){
+      x.getAttribute('value') ? x.setAttribute('value',helperjs.MD5(x.getAttribute('value').trim())):'';
+    }
+    else if(x.nodeName.toLowerCase() == 'textarea' ){
+      x.textContent ? x.textContent = helperjs.MD5(x.textContent.trim()):'';
     }
 
   });
@@ -107,16 +120,21 @@ window.addEventListener("load",function(event) {
         return rep+x.slice(1);
       }).join(' ');
     }
+    else if(x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text'){
+      x.setAttribute('value',x.getAttribute('value').trim().split(' ').map(function(x){
+        var rep = utf8Char1.indexOf(x.charAt(0)) < 0 ? x.charAt(0).toUpperCase() : utf8Char2[utf8Char1.indexOf(x.charAt(0))];
+        return rep+x.slice(1);
+      }).join(' '));
+    }
 
-    else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
-      x.value =  x.value.trim().split(' ').map(function(x){
+    else if(x.nodeName.toLowerCase() == 'textarea'){
+      x.textContent =  x.textContent.trim().split(' ').map(function(x){
         var rep = utf8Char1.indexOf(x.charAt(0)) < 0 ? x.charAt(0).toUpperCase() : utf8Char2[utf8Char1.indexOf(x.charAt(0))];
         return rep+x.slice(1);
       }).join(' ');
     }
-
   });
-  
+
   document.querySelectorAll('[open-iframe*=true]').forEach(function(x){
     //supported video streaming sites
     //youtube.com
@@ -127,7 +145,7 @@ window.addEventListener("load",function(event) {
     //break.com
     //alkislarlayasiyorum
     x.addEventListener('click',function (event){
-      
+
       try {
 
         var id = helperjs.MD5(Math.random().toString(36).substring(7));
@@ -137,21 +155,21 @@ window.addEventListener("load",function(event) {
         var src = x.getAttribute('iframe-src');
 
         if(!src) throw new Error('iframe-src not found.');
-        
+
         //width
         var width = x.getAttribute('iframe-width');
-        
+
         var width = width ? width.indexOf('%') > -1 ? width:width+'px':'75%';
         //height
         var height = x.getAttribute('iframe-height');
-        
+
         var height = height ? height.indexOf('%') > -1 ? height:height+'px':'auto';
- 
+
         //youtube.com
         if(src.indexOf('youtube.com/watch?v=') > -1){
           src = '//www.youtube.com/embed/'+src.split('watch?v=')[1].split('&')[0];
         }
-        
+
         //dailymotion
         else if(src.indexOf('dailymotion.com/video') > -1){
           var vid = src.str_replace(
@@ -160,13 +178,13 @@ window.addEventListener("load",function(event) {
           ).split('_');
           src = vid[0] ? '//www.dailymotion.com/embed/video/'+vid[0]:src;
         }
-        
+
         //vimeo.com
-        else if(src.indexOf('vimeo.com') > -1){  
+        else if(src.indexOf('vimeo.com') > -1){
           var vid = src.str_replace(['https://','http://','www.'],['','','']).split('/');
           src = vid[1] ? '//player.vimeo.com/video/'+vid[1]+'?title=0&byline=0&portrait=0&badge=0':src;
         }
-        
+
         //izlesene.com
         else if(src.indexOf('izlesene.com/video') > -1){
           var vid = src.str_replace(
@@ -175,13 +193,13 @@ window.addEventListener("load",function(event) {
           ).split('/');
           src = '//www.izlesene.com/embedplayer/'+vid[1]+'/?showrel=1&loop=0&autoplay=0&autohide=1&showinfo=1&socialbuttons=1';
         }
-        
+
         //vidivodo.com
         else if(src.indexOf('vidivodo.com') > -1){
           var vid = src.str_replace(['https://','http://','www.'],['','','']).split('/');
           src = vid[1] ? '//www.vidivodo.com/embed/'+vid[1]:src;
         }
-        
+
         //break.com
         else if(src.indexOf('break.com/video') > -1){
           var vid = src.str_replace(
@@ -190,7 +208,7 @@ window.addEventListener("load",function(event) {
           ).split('-').array_end();
           src = '//www.break.com/embed/'+vid+'?embed=1';
         }
-        
+
         //alkislarlayasiyorum.com
         else if(src.indexOf('alkislarlayasiyorum.com/icerik') > -1){
           var vid = src.str_replace(
@@ -207,7 +225,7 @@ window.addEventListener("load",function(event) {
         open +='</div>';
         open +='</div>';
         document.querySelector('body').insertAdjacentHTML('beforeend',open);
-        
+
         //delete
         document.getElementById('close_ov_'+id).addEventListener('click',function(){
           var element = document.getElementById("helperjs_ov_"+id+"");
@@ -215,7 +233,7 @@ window.addEventListener("load",function(event) {
             element.parentNode.removeChild(element);
           }
         });
-        
+
         //disable a element event
         x.nodeName.toLowerCase() == 'a'? event.preventDefault():'';
 
@@ -225,25 +243,31 @@ window.addEventListener("load",function(event) {
 
     });
   });
-  
+
   //str-replace
   //Replace the text in the typed element str-replace = "[{searched text1, searched text2}, {newtext1, newtext2}]"
   document.querySelectorAll('[str-replace*="["]').forEach(function(x){
     try {
-           
+
       var data = x.getAttribute('str-replace').trim().replace('[{','').replace('}]','').split('},{');
-      
+
       if(!data[0] && !data[1]) throw new Error('Missing parameter.');
-      
+
       if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
         if(x.innerHTML){
           x.innerHTML = x.innerHTML.str_replace(data[0].split(','),data[1].split(','));
         }
       }
 
-      else if( (x.nodeName == 'INPUT' && x.type == 'text') ||  x.nodeName == 'TEXTAREA' ){
-        if(x.value){
-          x.value = x.value.str_replace(data[0].split(','),data[1].split(','));
+      else if(x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text'){
+        if(x.getAttribute('value')){
+          x.setAttribute('value',x.getAttribute('value').str_replace(data[0].split(','),data[1].split(',')));
+        }
+      }
+
+      else if(x.nodeName.toLowerCase() == 'textarea' ){
+        if(x.textContent){
+          x.textContent = x.textContent.str_replace(data[0].split(','),data[1].split(','));
         }
       }
 
@@ -252,11 +276,11 @@ window.addEventListener("load",function(event) {
     }
 
   });
-  
+
   document.querySelector('html').style.display='block';
-  
+
 },false);
- 
+
 var helperjs = {
 
   ajax : function(obj){
@@ -330,7 +354,7 @@ var helperjs = {
 
 String.prototype.str_replace = function(find, replace) {
   var replaceString = this;
-  var regex; 
+  var regex;
   for (var i = 0; i < find.length; i++) {
     regex = new RegExp(find[i], "g");
     replaceString = replaceString.replace(regex, replace[i]);
