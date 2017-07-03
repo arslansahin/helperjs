@@ -205,8 +205,8 @@ window.addEventListener("load",function(event) {
           var vid = src.str_replace(
             ['https://','http://','www.','break.com/video/'],
             ['','','','']
-          ).split('-').array_end();
-          src = '//www.break.com/embed/'+vid+'?embed=1';
+          ).split('-');
+          src = '//www.break.com/embed/'+vid[vid.length-1]+'?embed=1';
         }
 
         //alkislarlayasiyorum.com
@@ -328,7 +328,12 @@ var helperjs = {
   loadjs : function(js_path) {
     if(js_path.length > 0){
       for(var js in js_path){
-        document.write('<' + 'script src="' + js_path[js] + '"><' + '/script>');
+        var create = document.createElement('script');
+        create.type = 'text/javascript';
+        create.async = true;
+        create.src = js_path[js];
+        var tag = document.getElementsByTagName('script')[0];
+        tag.parentNode.insertBefore(create,tag);
       }
     }
   },
@@ -361,7 +366,8 @@ String.prototype.str_replace = function(find, replace) {
   }
   return replaceString;
 };
-
+/*
 Array.prototype.array_end = function(){
   return this[this.length-1];
 };
+*/
