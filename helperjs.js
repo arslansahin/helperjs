@@ -281,6 +281,30 @@ window.addEventListener("load",function(event) {
 
   });
 
+  //image to canvas
+  document.querySelectorAll('[img2canvas*=true]').forEach(function(x){
+    var id = helperjs.MD5(Math.random().toString(36).substring(7));
+    var canvas_width =  x.getAttribute('img2canvas-width');
+    x.insertAdjacentHTML('beforeend','<canvas id="helperjs_canvas_'+id+'" width="'+canvas_width+'"></canvas>');
+    x.querySelectorAll("img").forEach(function(y){
+      var cnv = document.getElementById("helperjs_canvas_"+id+"");
+      var ctx = cnv.getContext("2d");
+      var img = new Image();
+      img.onload = function(data){
+        cnv.height = cnv.width * (img.height / img.width);
+        var oc = document.createElement('canvas');
+        var octx = oc.getContext('2d');
+        oc.width = img.width * 0.5;
+        oc.height = img.height * 0.5;
+        octx.drawImage(img, 0, 0, oc.width, oc.height);
+        octx.drawImage(oc, 0, 0, oc.width * 0.5, oc.height * 0.5);
+        ctx.drawImage(oc, 0, 0, oc.width * 0.5, oc.height * 0.5,0, 0, cnv.width, cnv.height);
+      }
+      img.src = y.src;
+      y.remove();
+    });
+  });
+
   document.querySelector('html').style.display='block';
 
 },false);
