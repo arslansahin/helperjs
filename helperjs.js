@@ -135,7 +135,8 @@ window.addEventListener("load",function(event) {
     }
   });
 
-  document.querySelectorAll('[open-iframe*=true]').forEach(function(x){
+  //open iframe
+  document.querySelectorAll('[iframe-open*=true]').forEach(function(x){
     //supported video streaming sites
     //youtube.com
     //dailymotion.com
@@ -242,6 +243,9 @@ window.addEventListener("load",function(event) {
       }
 
     });
+
+    //auto open iframe
+    x.getAttribute('iframe-click') == "true" ? x.click():'';
   });
 
   //str-replace
@@ -295,33 +299,27 @@ var helperjs = {
     try {
 
       if(typeof obj != 'object') throw new Error();
-
       if(!Object.keys(obj).indexOf('type') < 0 || !Object.keys(obj).indexOf('url') < 0) throw new Error();
       var http = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
       http.open(obj.type, obj.url, true);
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function () {
-
         if(http.readyState == 2 && http.status == 200){
           obj.start && obj.start(http.status);
         }
-
         if (http.readyState == 4) {
-
           if (http.status == 200) {
             obj.success && obj.success(http.responseText);
           } else {
             obj.error && obj.error(http.status);
           }
         }
-
       };
       http.send(obj.data?obj.data:null);
 
     } catch (e) {
       //console.log(e);
     }
-
   },
 
   //multiple js file load
@@ -366,6 +364,7 @@ String.prototype.str_replace = function(find, replace) {
   }
   return replaceString;
 };
+
 /*
 Array.prototype.array_end = function(){
   return this[this.length-1];
