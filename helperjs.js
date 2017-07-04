@@ -322,15 +322,14 @@ window.addEventListener("load",function(event) {
       };
       var map = new google.maps.Map(x, mapOptions);
       var image = 'http://www.google.com/mapfiles/marker.png';
-      if (description && decodeURIComponent(description)) {
-        var contentString = '<div style="color: black;line-height:25px;font-size:14px;">' + decodeURIComponent(description) + '</div>';
-      } else if (title && decodeURIComponent(title)) {
-        var contentString = '<div style="color: black;line-height:25px;font-size:14px;">' + decodeURIComponent(title) + '</div>';
+      var description = description?description:title;
+      if(description){
+        var contentString = decodeURIComponent(description);
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString,
+          maxWidth: 250
+        });
       }
-      var infowindow = new google.maps.InfoWindow({
-        content: contentString,
-        maxWidth: 250
-      });
       var marker = new google.maps.Marker({
         position: myLatlng,
         map: map,
