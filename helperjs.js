@@ -320,7 +320,7 @@ window.addEventListener("load",function(event) {
         zoom: zoom,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
-      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var map = new google.maps.Map(x, mapOptions);
       var image = 'http://www.google.com/mapfiles/marker.png';
       if (description && decodeURIComponent(description)) {
         var contentString = '<div style="color: black;line-height:25px;font-size:14px;">' + decodeURIComponent(description) + '</div>';
