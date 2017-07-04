@@ -305,6 +305,44 @@ window.addEventListener("load",function(event) {
     });
   });
 
+  //map
+  document.querySelectorAll('[google-map*=true]').forEach(function(x){
+    var mapkey = x.getAttribute('map-key');
+    helperjs.loadjs('https://maps.googleapis.com/maps/api/js?key=' + mapkey + '', function () {
+      var lat = x.getAttribute('map-lat');
+      var lon = x.getAttribute('map-lon');
+      var zoom = x.getAttribute('map-zoom') ? parseFloat(x.getAttribute('map-zoom')):10;
+      var title = x.getAttribute('map-title');
+      var description = x.getAttribute('map-description');
+      var myLatlng = new google.maps.LatLng(lat, lon);
+      var mapOptions = {
+        center: myLatlng,
+        zoom: zoom,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var image = 'http://www.google.com/mapfiles/marker.png';
+      if (description && decodeURIComponent(description)) {
+        var contentString = '<div style="color: black;line-height:25px;font-size:14px;">' + decodeURIComponent(description) + '</div>';
+      } else if (title && decodeURIComponent(title)) {
+        var contentString = '<div style="color: black;line-height:25px;font-size:14px;">' + decodeURIComponent(title) + '</div>';
+      }
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString,
+        maxWidth: 250
+      });
+      var marker = new google.maps.Marker({
+        position: myLatlng,
+        map: map,
+        title: decodeURIComponent(title),
+        icon: image
+      });
+      infowindow.open(map, marker);
+
+
+    });
+  });
+
   document.querySelector('html').style.display='block';
 
 },false);
@@ -345,47 +383,41 @@ var helperjs = {
       //console.log(e);
     }
   },
-  createscript : function(source){
-    var create = document.createElement('script');
-    create.type = 'text/javascript';
-    //create.async = true;
-    create.src = source;
-    var tag = document.getElementsByTagName('script')[0];
-    tag.parentNode.insertBefore(create,tag);
-  },
+
   //multiple js file load
-  loadjs : function(js_path,handler) {
+  loadjs : function(js_path,callback) {
 
     if(typeof js_path == 'object'){
-
       if(js_path.length > 0){
         for(var js in js_path){
-          helperjs.createscript(js_path[js]);
+          var create = document.createElement('script');
+          create.type = 'text/javascript';
+          //create.async = true;
+          create.src = js_path[js];
+          var tag = document.getElementsByTagName('script')[0];
+          tag.parentNode.insertBefore(create,tag);
         }
       }
-
     }
 
     else if(typeof js_path == 'string'){
-      var http = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-      http.open('GET', js_path, true);
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function () {
-        if (http.readyState == 4) {
-          if (http.status == 200) {
-            helperjs.createscript(js_path);
-            handler();
-          } else {
-            console.log('Not loaded file');
+      var head=document.getElementsByTagName("head")[0];
+      var script=document.createElement('script');
+      script.src=js_path;
+      script.type='text/javascript';
+      //real browsers
+      script.onload=callback;
+      //Internet explorer
+      script.onreadystatechange = function() {
+          if (this.readyState == 'complete') {
+              callback();
           }
-        }
-      };
-      http.send(null);
-
+      }
+      head.appendChild(script);
     }
 
-
   },
+
   //multiple css file load
   loadcss : function(css_path) {
     if(css_path.length > 0){
