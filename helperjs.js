@@ -229,7 +229,8 @@ window.addEventListener("load",function(event) {
   document.querySelectorAll('[img2canvas*=true]').forEach(function(x){
     var id = helperjs.MD5(Math.random().toString(36).substring(7));
     var canvas_width =  x.getAttribute('img2canvas-width');
-    x.insertAdjacentHTML('beforeend','<canvas id="helperjs_canvas_'+id+'" width="'+canvas_width+'"></canvas>');
+    var img_class = x.getElementsByTagName('img')[0].getAttribute('class');
+    x.insertAdjacentHTML('beforeend','<canvas id="helperjs_canvas_'+id+'" '+(canvas_width?'width="'+canvas_width+'"':'')+' '+(img_class?'class="'+img_class+'"':'')+'"></canvas>');
     x.querySelectorAll("img").forEach(function(y){
       var cnv = document.getElementById("helperjs_canvas_"+id+"");
       var ctx = cnv.getContext("2d");
@@ -448,6 +449,11 @@ var helperjs = {
     //duration, display,callback
     var duration = data.duration;//minutes
     var timer = duration, minutes, seconds;
+    minutes = parseInt(timer / 60, 10)
+    seconds = parseInt(timer % 60, 10);
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    data.display.textContent = minutes + ":" + seconds;
     setInterval(function () {
       minutes = parseInt(timer / 60, 10)
       seconds = parseInt(timer % 60, 10);
