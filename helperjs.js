@@ -62,10 +62,10 @@ window.addEventListener("load",function(event) {
     if(file){
       var info = (/[.]/.exec(file)) ? /[^.]+$/.exec(file) : undefined;
       if(info[0].toLowerCase() == 'css'){
-        helperjs.loadcss([file]);
+        helperjs.loadCss([file]);
       }
       else if(info[0].toLowerCase() == 'js'){
-        helperjs.loadjs([file]);
+        helperjs.loadJs([file]);
       }
     }
   });
@@ -262,7 +262,7 @@ window.addEventListener("load",function(event) {
       if(!lon) throw new Error("map-lon parameter not entered.");
       var defaultWidth = '400px';
       var defaultHeight= '300px';
-      helperjs.loadjs('https://maps.googleapis.com/maps/api/js?key=' + mapkey + '&libraries=places&sensor=false', function () {
+      helperjs.loadJs('https://maps.googleapis.com/maps/api/js?key=' + mapkey + '&libraries=places&sensor=false', function () {
 
         if(x.getAttribute('style') == null){
           x.setAttribute('style','width:'+defaultWidth+';height:'+defaultHeight+';');
@@ -362,7 +362,7 @@ var helperjs = {
     }
   },
   //multiple js file load
-  loadjs : function(js_path,callback,count) {
+  loadJs : function(js_path,callback,count) {
     if(typeof js_path == 'object'){
       if(js_path.length > 0){
         for(var js in js_path){
@@ -395,7 +395,7 @@ var helperjs = {
     }
   },
   //multiple css file load
-  loadcss : function(css_path) {
+  loadCss : function(css_path) {
     if(css_path.length > 0){
       for(var css in css_path){
         var f = document.createElement("link");
