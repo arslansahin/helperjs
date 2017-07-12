@@ -8,7 +8,7 @@
 NodeList.prototype.forEach = Array.prototype.forEach;
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 document.querySelector('html').style.display='none';
-var elementArray = ['div','a','p','span','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr'];
+var elementArray = ['div','a','p','span','code','pre','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr'];
 window.addEventListener("load",function(event) {
   //striptags
   document.querySelectorAll('[striptags*=true]').forEach(function(x){
