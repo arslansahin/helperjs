@@ -14,7 +14,39 @@ var elementArray = [
   'thead','tr','td','th','ul','li','ol','hr'
 ];
 window.addEventListener("load",function(event) {
-  document.querySelectorAll('[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+  document.querySelectorAll('[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+    //helper-if
+    // Example 1 : <a helper-if=" href ? javascript:void(0);" href="">Link 1</a>
+    // Example 1 Result : <a helper-if=" href ? javascript:void(0);" href="javascript:void(0);">Link 1</a>
+    // Example 2 : <a helper-if=" href ? javascript:void(0);" href="http://helperjs.com">Link 2</a>
+    // Example 2 Result : <a helper-if=" href ? javascript:void(0);" href="http://helperjs.com">Link1</a>
+    if(x.getAttribute('helper-if')){
+      try {
+        var helper_if = x.getAttribute('helper-if').split('?');
+        var _attrName = helper_if[0].trim();
+        if(!_attrName) throw new Error('helper-if Attribute name not found');
+        if(!x.getAttribute(_attrName)){
+          x.setAttribute(_attrName, helper_if[1]);
+        }
+        /*
+        var if_split = helper_if[1].split(':');
+
+        if(!if_split[0] || !if_split[1]) throw new Error('Missing if else parameters');
+
+        var _if = if_split[0];
+
+        if_split = if_split.filter(function(item) {
+            return item !== _if;
+        });
+
+        var _else = if_split.join(':');
+
+        x.setAttribute(_attrName, x.getAttribute(_attrName) ? _if : _else);
+        */
+      } catch (e) {
+        console.log(e);
+      }
+    }
     //striptags
     if(x.getAttribute('striptags') == 'true'){
       if(elementArray.indexOf(x.nodeName.toLowerCase()) > -1){
@@ -126,7 +158,6 @@ window.addEventListener("load",function(event) {
     }
     //open iframe
     if(x.getAttribute('iframe-open') == 'true'){
-
         //supported video streaming sites
         //youtube.com
         //dailymotion.com
