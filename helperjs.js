@@ -8,7 +8,11 @@
 NodeList.prototype.forEach = Array.prototype.forEach;
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 document.querySelector('html').style.display='none';
-var elementArray = ['div','a','p','span','code','pre','h1','h2','h3','h4','h5','h6','table','tbody','thead','tr','td','th','ul','li','ol','hr'];
+var elementArray = [
+  'html','body','div','a','p','span','code','pre',
+  'h1','h2','h3','h4','h5','h6','table','tbody',
+  'thead','tr','td','th','ul','li','ol','hr'
+];
 window.addEventListener("load",function(event) {
   document.querySelectorAll('[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
     //striptags
