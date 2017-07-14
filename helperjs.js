@@ -14,7 +14,46 @@ var elementArray = [
   'thead','tr','td','th','ul','li','ol','hr'
 ];
 window.addEventListener("load",function(event) {
-  document.querySelectorAll('[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+  document.querySelectorAll('[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+    //character-count
+    // parameters :
+    // character-count="true"
+    // character-limit="100"
+    // character-placeholder="true|false"
+    // character-placeholder-text="Up to 100 character"
+    // character-limit-alert="You have reached the character limit, you can not write more."
+    /* Example :
+        <input type="text" placeholder="Ad soyad"
+        character-count="true"
+        character-limit="10"
+        character-placeholder="true"
+        character-placeholder-text="Maksimum @limit karakter yazılabilir."
+        character-limit-alert="@limit karakterden fazla yazamazsınız.">
+    */
+    if(x.getAttribute('character-count') == 'true'){
+      var limit = x.getAttribute('character-limit');
+      if(limit > 0 && (
+        (x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text')
+        || x.nodeName.toLowerCase() == 'textarea'
+      )){
+        if(x.getAttribute('character-placeholder') !== 'false'){
+          var placeholder_text = x.getAttribute('character-placeholder-text');
+          placeholder_text = placeholder_text ? placeholder_text.replace('@limit',limit) : 'Max. '+limit+' character';
+          if(x.getAttribute('placeholder')){
+            x.setAttribute('placeholder',x.getAttribute('placeholder')+' ('+placeholder_text+')');
+          } else {
+            x.setAttribute('placeholder',placeholder_text)
+          }
+        }
+        x.addEventListener('keyup',function(event){
+          if(this.value.length > limit){
+            this.value = this.value.substr(0,limit);
+            x.getAttribute('character-limit-alert') &&
+            alert(x.getAttribute('character-limit-alert').replace('@limit',limit));
+          }
+        },false);
+      }
+    }
     //helper-if
     // Example 1 : <a helper-if=" !href ? javascript:void(0);" href="">Link 1</a>
     // Example 1 Result : <a helper-if=" !href ? javascript:void(0);" href="javascript:void(0);">Link 1</a>
