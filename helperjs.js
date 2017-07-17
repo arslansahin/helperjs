@@ -14,7 +14,19 @@ var elementArray = [
   'thead','tr','td','th','ul','li','ol','hr'
 ];
 window.addEventListener("load",function(event) {
-  document.querySelectorAll('[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+  document.querySelectorAll('[numeric*=true],[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+    // only numeric [0-9] character entry
+    // input text type and textarea form elements
+    if(x.getAttribute('numeric') == 'true'){
+      if((x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text') || x.nodeName.toLowerCase() == 'textarea'){
+        x.addEventListener('keypress',function(event){
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if(charCode > 31 && (event.charCode<48 || event.charCode>57)){
+              event.preventDefault();
+            }
+        });
+      }
+    }
     //character-count
     // parameters :
     // character-count="true"
