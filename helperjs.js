@@ -14,14 +14,42 @@ var elementArray = [
   'thead','tr','td','th','ul','li','ol','hr'
 ];
 window.addEventListener("load",function(event) {
-  document.querySelectorAll('[numeric*=true],[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+  document.querySelectorAll('[money-format*=true],[numeric*=true],[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+    //money-format
+    if(x.getAttribute('money-format') == 'true'){
+      if((x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text') || x.nodeName.toLowerCase() == 'textarea'){
+        x.addEventListener('keydown',function(){
+          var charCode = (window.event.which) ? window.event.which : window.event.keyCode;
+          if(
+            charCode > 31 &&
+            (charCode < 37 || charCode > 40) &&
+            charCode != 108 && charCode != 188 && charCode != 191 &&
+            (charCode < 44 ||charCode > 57) &&
+            (charCode < 96 ||charCode > 105)
+          ){
+            window.event.preventDefault();
+          }else {
+             this.addEventListener('change',function(event){
+               if(this.value) {
+                 var text = parseFloat(this.value.replace(',','').replace('.00',''));
+                 var _return = text.toFixed(2).replace(/./g, function(c, i, a) {
+                     return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+                 });
+                 _return != 'NaN' ? this.value = _return : '';
+               }
+             },false);
+          }
+
+        });
+      }
+    }
     // only numeric [0-9] character entry
     // input text type and textarea form elements
     if(x.getAttribute('numeric') == 'true'){
       if((x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text') || x.nodeName.toLowerCase() == 'textarea'){
         x.addEventListener('keypress',function(event){
             var charCode = (event.which) ? event.which : event.keyCode;
-            if(charCode > 31 && (event.charCode<48 || event.charCode>57)){
+            if(charCode > 31 && (charCode<48 || charCode>57)){
               event.preventDefault();
             }
         });
