@@ -14,7 +14,39 @@ var elementArray = [
   'thead','tr','td','th','ul','li','ol','hr'
 ];
 window.addEventListener("load",function(event) {
-  document.querySelectorAll('[money-format*=true],[numeric*=true],[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+  document.querySelectorAll('[repeater*=true],[money-format*=true],[numeric*=true],[character-count*=true],[helper-if],[date*=true],[str-replace*="["],[striptags*=true],[htmlentities*=true],[substr*=true],[function],[md5*=true],[load-file],[include],[uppercase*=true],[iframe-open*=true],[img2canvas*=true],[google-map*=true],[timer*=true]').forEach(function(x){
+    //repeater="true"
+    //repeater-source="json data url"
+    //<div repeater="true" repeater-source="http://helperjs.com/datas/city.json"> id : [id] - name : [name] </div>
+    if(x.getAttribute('repeater') == 'true'){
+      x.style.display='none';
+      var source = x.getAttribute('repeater-source');
+      x.removeAttribute('repeater');
+      x.removeAttribute('repeater-source');
+      if(source){
+        var xhr = typeof XMLHttpRequest != 'undefined'? new XMLHttpRequest(): new ActiveXObject('Microsoft.XMLHTTP');
+        xhr.open("GET", source, true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var datas = JSON.parse(xhr.responseText);
+            if(Object.keys(datas).length){
+              for(var key in datas){
+                var clone = x.cloneNode(true);
+                Object.keys(datas[key]).forEach(function(f){
+                  if(clone.innerHTML.indexOf('['+f+']') > -1){
+                      clone.innerHTML = clone.innerHTML.replace('['+f+']',datas[key][f]);
+                  }
+                });
+                x.parentElement.appendChild(clone);
+                clone.style.display='';
+              }
+            }
+            x.remove();
+          }
+        }
+        xhr.send();
+      }
+    }
     //money-format
     if(x.getAttribute('money-format') == 'true'){
       if((x.nodeName.toLowerCase() == 'input' && x.type.toLowerCase() == 'text') || x.nodeName.toLowerCase() == 'textarea'){
@@ -646,8 +678,29 @@ String.prototype.str_replace = function(find, replace) {
   }
   return replaceString;
 };
-/*
-Array.prototype.array_end = function(){
-  return this[this.length-1];
-};
-*/
+//https://stackoverflow.com/questions/5683087/chaining-getelementbyid?answertab=active#tab-top
+Element.prototype.getElementById = function(req) {
+  var elem = this, children = elem.childNodes, i, len, id;
+
+  for (i = 0, len = children.length; i < len; i++) {
+      elem = children[i];
+
+      //we only want real elements
+      if (elem.nodeType !== 1 )
+          continue;
+
+      id = elem.id || elem.getAttribute('id');
+
+      if (id === req) {
+          return elem;
+      }
+      //recursion ftw
+      //find the correct element (or nothing) within the child node
+      id = elem.getElementById(req);
+
+      if (id)
+          return id;
+  }
+  //no match found, return null
+  return null;
+}
