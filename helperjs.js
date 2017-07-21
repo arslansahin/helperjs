@@ -33,6 +33,11 @@ window.addEventListener("load",function(event) {
               for(var key in datas){
                 var clone = x.cloneNode(true);
                 Object.keys(datas[key]).forEach(function(f){
+                  var attr = [].slice.call(clone.attributes).map(attr => {
+                    if(attr.value.indexOf('['+f+']') > -1){
+                      clone.setAttribute(attr.name,attr.value.replace('['+f+']',datas[key][f]));
+                    }
+                  });;
                   if(clone.innerHTML.indexOf('['+f+']') > -1){
                       clone.innerHTML = clone.innerHTML.replace('['+f+']',datas[key][f]);
                   }
