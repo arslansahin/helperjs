@@ -31,6 +31,7 @@ window.addEventListener("load",function(event) {
             var datas = JSON.parse(xhr.responseText);
             if(Object.keys(datas).length){
               for(var key in datas){
+                if(Object.keys(datas[key]).length > 0){
                 var clone = x.cloneNode(true);
                 Object.keys(datas[key]).forEach(function(f){
                   var attr = [].slice.call(clone.attributes).map(attr => {
@@ -44,9 +45,13 @@ window.addEventListener("load",function(event) {
                 });
                 x.parentElement.appendChild(clone);
                 clone.style.display='';
+                }
               }
             }
             x.remove();
+            if(x.getAttribute('repeater-event')){
+              eval(x.getAttribute('repeater-event'));
+            }
           }
         }
         xhr.send();
@@ -709,3 +714,5 @@ Element.prototype.getElementById = function(req) {
   //no match found, return null
   return null;
 }
+
+
